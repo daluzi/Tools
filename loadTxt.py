@@ -1,5 +1,6 @@
 # coding=UTF-8
 import sys
+import numpy
 
 def ReadTxtData(filePath):
 	resultData = []
@@ -8,4 +9,8 @@ def ReadTxtData(filePath):
 			resultData.append(list(line.strip("\n").split("::")))
 	print(len(resultData))
 	print(resultData)
-	retrun resultData
+	return resultData
+
+def ReadTxtData_np(filename):
+	dataSet = numpy.loadtxt(filename)
+	return dataSet
