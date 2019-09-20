@@ -1,6 +1,8 @@
 # coding=UTF-8
 import sys
+
 import numpy
+from numpy import *
 
 def ReadTxtData(filePath):
 	resultData = []
@@ -14,3 +16,11 @@ def ReadTxtData(filePath):
 def ReadTxtData_np(filename):
 	dataSet = numpy.loadtxt(filename)
 	return dataSet
+
+if __name__ == "__main__":
+	a = [[1,20],[2,32]]
+	x = []
+	for i,j in a:
+		print(i,j)
+		x.append(j)
+	print(x)
