@@ -24,3 +24,6 @@ if __name__ == "__main__":
 		print(i,j)
 		x.append(j)
 	print(x)
+	b = '6040::2019::5::956703977'
+	print(b.strip("\n").split("::"))
+	print(list(b.strip("\n").split("::")[i] for i in range(3)))
