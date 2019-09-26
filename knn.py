@@ -12,8 +12,10 @@ def myKNN(S, k, sigma=1.0):
 
 	for i in range(N):
 		dist_with_index = zip(S[i], range(N))
+		# print(list(dist_with_index))
+		print(dist_with_index)
 		dist_with_index = sorted(dist_with_index, key=lambda x: x[0], reverse=True)
-		# print(dist_with_index)
+		print(dist_with_index)
 		neighbours_id = [dist_with_index[m][1] for m in range(k)]  # xi's k nearest neighbours
 		# print("neigh",neighbours_id)
 		for j in neighbours_id:  # xj is xi's neighbour
