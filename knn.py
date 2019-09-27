@@ -5,21 +5,24 @@
 # @Software : PyCharm
 
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
 def myKNN(S, k, sigma=1.0):
 	N = len(S)  # 输出的是矩阵的行数
 	A = np.zeros((N, N))
 
 	for i in range(N):
+		print(S[i])
 		dist_with_index = zip(S[i], range(N))
 		# print(list(dist_with_index))
-		print(dist_with_index)
+		# print(list(dist_with_index)[0])
 		dist_with_index = sorted(dist_with_index, key=lambda x: x[0], reverse=True)
 		print(dist_with_index)
+		# print(dist_with_index[1][1])
 		neighbours_id = [dist_with_index[m][1] for m in range(k)]  # xi's k nearest neighbours
-		# print("neigh",neighbours_id)
+		print("neigh",neighbours_id)
 		for j in neighbours_id:  # xj is xi's neighbour
-			# print(j)
+			print(j)
 			A[i][j] = 1
 			A[j][i] = A[i][j]  # mutually
 	# print(A[i])
@@ -31,6 +34,32 @@ def myKNN(S, k, sigma=1.0):
 				A[i][j] = 0
 	return A
 
+def trainW1(v):
+	similarMatrix = cosine_similarity(v)
+	m = np.shape(similarMatrix)[0]
+	print(m)
+	for i in range(m):
+		for j in range(m):
+			if j == i:
+				similarMatrix[i][j] = 0
+	return similarMatrix
+def trainW(v):
+	similarMatrix = cosine_similarity(v)
+	m = np.shape(similarMatrix)[0]
+	# print(m)
+	# for i in range(m):
+	# 	for j in range(m):
+	# 		if j == i:
+	# 			similarMatrix[i][j] = 0
+	return similarMatrix
+
 if __name__ == "__main__":
-	test = [[1,2,3,4,5],[6,7,8,9,10],[6,7,8,9,10],[6,7,8,9,10],[6,7,8,9,10]]
-	print(myKNN(test,5))
+	test = [[1,2,3,4,5],[6,7,8,9,10],[16,7,8,19,10],[6,7,18,39,10],[46,27,8,9,10],[46,27,8,9,10]]
+	print(np.array(test).shape)
+	test1 = trainW(test)
+	test2 = trainW1(test)
+
+	print(test1)
+	print(myKNN(test,3))
+	print(myKNN(test1,3))
+	print(myKNN(test2,3))
