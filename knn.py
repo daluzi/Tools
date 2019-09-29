@@ -51,15 +51,21 @@ def trainW(v):
 	# 	for j in range(m):
 	# 		if j == i:
 	# 			similarMatrix[i][j] = 0
+	print("asdad",similarMatrix)
 	return similarMatrix
 
 if __name__ == "__main__":
 	test = [[1,2,3,4,5],[6,7,8,9,10],[16,7,8,19,10],[6,7,18,39,10],[46,27,8,9,10],[46,27,8,9,10]]
 	print(np.array(test).shape)
 	test1 = trainW(test)
+	te = trainW(test1)
 	test2 = trainW1(test)
 
 	print(test1)
 	print(myKNN(test,3))
 	print(myKNN(test1,3))
 	print(myKNN(test2,3))
+
+	asd = [[1,2,3,4],[2,3,4,5]]
+	asd = [[asd[i][j] + 1 for j in range(len(asd[i]))] for i in range(len(asd))]#每个元素累加1
+	print("asd",asd)
