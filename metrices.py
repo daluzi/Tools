@@ -32,6 +32,24 @@ def VectorSpaceSimilarity(R,I,si,sf):
 '''
 	PCC
 '''
-def PearsonCorrelationCoefficient():
-	
-	pass
+def PearsonCorrelationCoefficient(R,I,si,sf):
+	'''
+	:param R: m*n rating matrix,m users,n items
+	:param I: m*n demension, according to R: if user ui rated item vj,then Iij is equal to 1. and equal to 0 otherwise
+	:param si: user i
+	:param sf: user f
+	:return: VSS
+	'''
+	sumRijRfj = 0
+	sumRij = 0
+	sumRfj = 0
+	Rows, Columns = np.shape(R)
+	avgRij = np.sum(R[si]) / Columns
+	avgRfj = np.sum(R[sf]) / Columns
+	for i in range(Columns):
+		if I[si][i] == 1 and I[sf][i] == 1:
+			sumRijRfj += (R[si][i] - avgRij) * (R[sf][i] - avgRfj)
+			sumRij += np.square(R[si][i] - avgRij)
+			sumRfj += np.square(R[sf][i] - avgRfj)
+	simIF = sumRijRfj / (np.sqrt(sumRij) * np.sqrt(sumRfj))
+	return simIF
