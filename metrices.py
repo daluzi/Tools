@@ -11,6 +11,7 @@ import math
 '''
 def VectorSpaceSimilarity(R,I,si,sf):
 	'''
+	VSS
 	:param R: m*n rating matrix,m users,n items
 	:param I: m*n demension, according to R: if user ui rated item vj,then Iij is equal to 1. and equal to 0 otherwise
 	:param si: user i
@@ -34,6 +35,7 @@ def VectorSpaceSimilarity(R,I,si,sf):
 '''
 def PearsonCorrelationCoefficient(R,I,si,sf):
 	'''
+	PCC
 	:param R: m*n rating matrix,m users,n items
 	:param I: m*n demension, according to R: if user ui rated item vj,then Iij is equal to 1. and equal to 0 otherwise
 	:param si: user i
