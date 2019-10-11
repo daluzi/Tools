@@ -6,6 +6,7 @@
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from scipy.spatial.distance import pdist,squareform #此也为计算相似矩阵的一个库,dist_matrix = squareform(pdist(data,metric='euclidean'))
 
 def myKNN(S, k, sigma=1.0):
 	N = len(S)  # 输出的是矩阵的行数
