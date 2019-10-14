@@ -5,3 +5,9 @@
 # @Software : PyCharm
 
 import metrices
+
+a = 0
+def A(a):
+	a = 2
+A(a)
+print(a)
