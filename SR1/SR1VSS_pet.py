@@ -3,11 +3,14 @@
 # @time     : 2019/10/10 22:24
 # @File     : SR1VSS_set.py
 # @Software : PyCharm
+from sklearn.metrics.pairwise import cosine_similarity
 
 import metrices
 import numpy as np
 from numpy import *
 import random
+import copy
+import metrices
 
 
 # 读取txt文件
@@ -30,7 +33,7 @@ def ProData(dataSet):
 	dataSetSecondColu.sort()  # 排序
 	print(dataSetSecondColu)
 	# print("下标:\n",dataSetSecondColu.index(149532))
-	user_item_matrix = np.zeros((669, 10325))
+	user_item_matrix = np.zeros((1624, 1672))
 
 	dataSet = [np.array(list(map(lambda x: float32(x), dataSet[i]))) for i in range(len(dataSet))]  # 字符数组转化为数字数组
 	dataSet = np.array(dataSet)
@@ -71,19 +74,73 @@ def ProData(dataSet):
 	trainR = total / lentrc
 	print("trainR:\n", trainR)
 
-	return trainR, train_matrix, test_matrix
+	return trainR, train_matrix, test_matrix #r没什么用处
 
+# 相似矩阵
+def trainW(v):
+	similarMatrix = cosine_similarity(v)
+	m = np.shape(similarMatrix)[0]
+	for i in range(m):
+		for j in range(m):
+			if j == i:
+				similarMatrix[i][j] = 0
+	return similarMatrix
+
+# KNN
+def myKNN(S, k):
+	N = len(S)  # 输出的是矩阵的行数
+	A = np.zeros((N, N))
+
+	for i in range(N):
+		dist_with_index = zip(S[i], range(N))
+		dist_with_index = sorted(dist_with_index, key=lambda x: x[0], reverse=True)
+		# print(dist_with_index)
+		neighbours_id = [dist_with_index[m][1] for m in range(k)]  # xi's k nearest neighbours
+		# print("neigh",neighbours_id)
+		for j in neighbours_id:  # xj is xi's neighbour
+			# print(j)
+			A[i][j] = 1
+			A[j][i] = A[i][j]  # mutually
+	# print(A[i])
+	m = np.shape(A)[0]
+	for i in range(m):
+		for j in range(m):
+			if j == i:
+				A[i][j] = 0
+	return A
 
 
 class SR1:
 
-	def __init__(self,filepath):
+	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
-		ProData(readData)
+		r, train, test = ProData(readData)
+		U, V = self.Update(train, k, 0)
 		pass
 
+	def Update(self, R, k, r):
+		XW = copy.copy(R)
+		XW[XW > 0] = 1
+
+		m, n = R.shape
+		U = np.array(np.random.random((10, m)))
+		V = np.array(np.random.random((10, n)))
+
+		#这里可以通过KNN找到user的朋友矩阵
+		simiX = trainW(R)
+		W = myKNN(simiX, 5)
+
+		# updating formulas
+		for i in range(k):
+			# U
+			for i_u in range(m):
+				for j_u in range(n):
+					U[i_u] = 
+
+		return U, V
 
 
 if __name__ == '__main__':
 	filePath = './pets/ratings.txt'
-	sr1 = SR1(filePath)
+	k = 10
+	sr1 = SR1(filePath, k)
