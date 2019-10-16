@@ -3,6 +3,7 @@ import sys
 
 import numpy
 from numpy import *
+import sys
 
 def ReadTxtData(filePath):
 	resultData = []
@@ -27,3 +28,13 @@ if __name__ == "__main__":
 	b = '6040::2019::5::956703977'
 	print(b.strip("\n").split("::"))
 	print(list(b.strip("\n").split("::")[i] for i in range(3)))
+
+	r = 1
+	newX = [[a[i][j] + r for j in range(len(a[i]))] for i in range(len(a))]
+	print(newX)
+
+	print(sys.getsizeof(1))#28
+	print(sys.getsizeof([]))#64
+	print(sys.getsizeof(()))#48
+	print(sys.getsizeof({}))#240
+	print(sys.getsizeof(True))#28
