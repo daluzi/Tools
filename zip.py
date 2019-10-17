@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
 # @Author   : daluzi
 # @time     : 2019/9/26 13:12
-# @File     : test.py
+# @File     : zip.py
 # @Software : PyCharm
 
 list1 = [1, 2, 3, 4]
