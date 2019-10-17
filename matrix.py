@@ -26,3 +26,7 @@ print(c.T)
 print(np.transpose(c))
 print(a * c)
 
+# 矩阵相加
+a = np.array([[1,2],[1,2]])
+b = np.array([[2,1],[2,1]])
+print(a + b)
