@@ -1,4 +1,4 @@
-import random
+import random_test
 import tkinter
 import numpy
 from click import command
