@@ -30,3 +30,10 @@ print(a * c)
 a = np.array([[1,2],[1,2]])
 b = np.array([[2,1],[2,1]])
 print(a + b)
+print(a - b)
+print(np.argwhere(a[0] == 1))
+print(a / 2)
+print(a[:,0])
+
+c = [1,2]
+print(np.array(c).shape)
