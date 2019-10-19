@@ -27,11 +27,13 @@ def VectorSpaceSimilarity(R,I,si,sf):
 			sumRijRfj = sumRijRfj + R[si][i] * R[sf][i]
 			sumRij = sumRij + np.square(R[si][i])
 			sumRfj = sumRfj + np.square(R[sf][i])
+	sumRij += 0.0001
+	sumRfj += 0.0001
 	simIF = sumRijRfj / (np.sqrt(sumRij) * np.sqrt(sumRfj))
-	print("sumRijRfj:\t",sumRijRfj)
-	print("sumRfj:\t",sumRfj)
-	print("sumRij:\t",sumRij)
-	print(simIF)
+	# print("sumRijRfj:\t",sumRijRfj)
+	# print("sumRfj:\t",sumRfj)
+	# print("sumRij:\t",sumRij)
+	# print(simIF)
 	return simIF
 
 '''
@@ -59,3 +61,8 @@ def PearsonCorrelationCoefficient(R,I,si,sf):
 			sumRfj += np.square(R[sf][i] - avgRfj)
 	simIF = sumRijRfj / (np.sqrt(sumRij) * np.sqrt(sumRfj))
 	return simIF
+
+
+R = [[1,2,3,4,5],[2,0,3,0,5],[2,3,0,0,0]]
+I = [[1,0,1,0,0],[1,1,0,0,1],[1,1,1,1,1]]
+VectorSpaceSimilarity(R, I, 1,2)
