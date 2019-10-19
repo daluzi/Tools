@@ -8,9 +8,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 import metrices
 import numpy as np
 from numpy import *
-import random
+import random_test
 import copy
 import metrices
+from sklearn.metrics import mean_squared_error #均方误差
+from sklearn.metrics import mean_absolute_error #平方绝对误差
+import random
 
 
 # 读取txt文件
@@ -115,27 +118,84 @@ class SR1:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 0)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001)
 		pass
 
-	def Update(self, R, k, r):
-		XW = copy.copy(R)
-		XW[XW > 0] = 1
+	def Update(self, R, k, r, lamb1, lamb2, aerfa):
+		'''
+
+		:param R: user-item matrix
+		:param k: The number of iterations
+		:param r: r-rank factors
+		:param lamb1: used to calculate U
+		:param lamb2: used to calculate V
+		:param aerfa:
+		:return:
+		'''
+		I = copy.copy(R)
+		I[I > 0] = 1
 
 		m, n = R.shape
-		U = np.array(np.random.random((10, m)))
-		V = np.array(np.random.random((10, n)))
+		U = np.array(np.random.random((r, m)))
+		V = np.array(np.random.random((r, n)))
 
 		#这里可以通过KNN找到user的朋友矩阵
 		simiX = trainW(R)
 		W = myKNN(simiX, 5)
+		# print("w:",W)
 
 		# updating formulas
 		for i in range(k):
 			# U
 			for i_u in range(m):
+				subU1 = np.zeros((r, 1))
 				for j_u in range(n):
-					U[i_u] = 
+					# print(np.array(U[:,i_u].T).shape, np.array(V[:,j_u]).shape)
+					# print(U[:,j_u].T)
+					# print(V[:,j_u])
+					# print(I[i_u][j_u])
+					subU1 = subU1 + (I[i_u][j_u] * (np.dot(U[:,i_u].T , V[:,j_u]) - R[i_u][j_u])) * V[:,j_u]
+				subU1 = subU1 + lamb1 * U[:,i_u]
+
+				subU2on = np.zeros((r, 1))
+				subU2down = 0
+				Fri = np.argwhere(W[i_u] == 1)
+				# print(Fri)
+				for f in range(len(Fri)):
+					print(Fri[f][0])
+					subU2on = subU2on + (metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])) * U[:,Fri[f][0]]
+					subU2down = subU2down + metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])
+				# print(subU2on.shape)
+				# print(subU2down)
+				subU2 = aerfa * (U[i_u] - (subU2on / subU2down))
+
+				subU3 = np.zeros((r, 1))
+				subU3on = np.zeros((r, 1))
+				subU3down = 0
+				subU3onon = np.zeros((r, 1))
+				subU3downdown = 0
+				for g in range(len(Fri)):
+					for f in range(len(Fri)):
+						subU3onon += (metrices.VectorSpaceSimilarity(R, I, Fri[g], Fri[f])) * U[Fri[f]]
+						subU3downdown += metrices.VectorSpaceSimilarity(R, I, Fri[g], Fri[f])
+						subU3down += metrices.VectorSpaceSimilarity(R, I, Fri[g], Fri[f])
+					subU3on += -metrices.VectorSpaceSimilarity(R, I, i_u, Fri[g]) * (U[g] - subU3onon / subU3downdown)
+					subU3 += (subU3on / subU3down)
+				subU3 = aerfa * subU3
+
+				subU = subU1 + subU2 + subU3
+
+				U[i_u] = U[i_u] - aerfa * subU
+
+			#V
+			for i_v in range(n):
+				subV = np.zeros((1, r))
+				for j_v in range(m):
+					subV += (I[i_v][j_v] * (np.dot(U[i_v].T , V[j_v]) - R[i_v][j_v])) * U[j_v]
+				subV = subV + lamb2 * U[i_v]
+
+				V[i_v] = V[i_v] - aerfa * subV
+
 
 		return U, V
 
