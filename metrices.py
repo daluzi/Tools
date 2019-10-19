@@ -24,10 +24,14 @@ def VectorSpaceSimilarity(R,I,si,sf):
 	Rows,Columns = np.shape(R)
 	for i in range(Columns):
 		if I[si][i] == 1 and I[sf][i] == 1:
-			sumRijRfj +=  R[si][i] * R[sf][i]
-			sumRij += np.square(R[si][i])
-			sumRfj += np.square(R[sf][i])
+			sumRijRfj = sumRijRfj + R[si][i] * R[sf][i]
+			sumRij = sumRij + np.square(R[si][i])
+			sumRfj = sumRfj + np.square(R[sf][i])
 	simIF = sumRijRfj / (np.sqrt(sumRij) * np.sqrt(sumRfj))
+	print("sumRijRfj:\t",sumRijRfj)
+	print("sumRfj:\t",sumRfj)
+	print("sumRij:\t",sumRij)
+	print(simIF)
 	return simIF
 
 '''
