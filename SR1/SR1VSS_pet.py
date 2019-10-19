@@ -132,6 +132,7 @@ class SR1:
 		:param aerfa:
 		:return:
 		'''
+		print("R:\n",R)
 		I = copy.copy(R)
 		I[I > 0] = 1
 
@@ -160,14 +161,18 @@ class SR1:
 				subU2on = np.zeros((r, 1))
 				subU2down = 0
 				Fri = np.argwhere(W[i_u] == 1)
-				# print(Fri)
+				print(len(Fri))
 				for f in range(len(Fri)):
-					print(Fri[f][0])
-					subU2on = subU2on + (metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])) * U[:,Fri[f][0]]
+					# print(Fri[f][0])
+					# print("i_u\t",i_u)
+					# print("Fri[%d][0]\t" % f,Fri[f][0])
+					# print(U[:,Fri[f][0]].shape)
+					subU2on = subU2on + (metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])) * np.array(U[:,Fri[f][0]])
+					# print("asd",subU2on)
 					subU2down = subU2down + metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])
-				# print(subU2on.shape)
+				# print(subU2on)
 				# print(subU2down)
-				subU2 = aerfa * (U[i_u] - (subU2on / subU2down))
+				subU2 = aerfa * (U[:,i_u] - (subU2on[0] / subU2down))
 
 				subU3 = np.zeros((r, 1))
 				subU3on = np.zeros((r, 1))
@@ -176,11 +181,12 @@ class SR1:
 				subU3downdown = 0
 				for g in range(len(Fri)):
 					for f in range(len(Fri)):
-						subU3onon += (metrices.VectorSpaceSimilarity(R, I, Fri[g], Fri[f])) * U[Fri[f]]
-						subU3downdown += metrices.VectorSpaceSimilarity(R, I, Fri[g], Fri[f])
-						subU3down += metrices.VectorSpaceSimilarity(R, I, Fri[g], Fri[f])
-					subU3on += -metrices.VectorSpaceSimilarity(R, I, i_u, Fri[g]) * (U[g] - subU3onon / subU3downdown)
-					subU3 += (subU3on / subU3down)
+						subU3onon = subU3onon + (metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])) * U[:,Fri[f][0]]
+						subU3downdown = subU3downdown + metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])
+						subU3down = subU3down + metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])
+					subU3on = subU3on + -(metrices.VectorSpaceSimilarity(R, I, i_u, Fri[g][0]) * (U[:,g] - subU3onon / subU3downdown))
+					subU3 = subU3 + (subU3on / subU3down)
+					print("subU3 run\t\t:",g)
 				subU3 = aerfa * subU3
 
 				subU = subU1 + subU2 + subU3
@@ -191,11 +197,11 @@ class SR1:
 			for i_v in range(n):
 				subV = np.zeros((1, r))
 				for j_v in range(m):
-					subV += (I[i_v][j_v] * (np.dot(U[i_v].T , V[j_v]) - R[i_v][j_v])) * U[j_v]
-				subV = subV + lamb2 * U[i_v]
+					subV += (I[i_v][j_v] * (np.dot(U[:,i_v].T , V[:,j_v]) - R[i_v][j_v])) * U[:,j_v]
+				subV = subV + lamb2 * U[:,i_v]
 
-				V[i_v] = V[i_v] - aerfa * subV
-
+				V[:,i_v] = V[:,i_v] - aerfa * subV
+			print("run%d" % i)
 
 		return U, V
 
