@@ -13,22 +13,22 @@ def myKNN(S, k, sigma=1.0):
 	A = np.zeros((N, N))
 
 	for i in range(N):
-		print(S[i])
+		# print(S[i])
 		dist_with_index = zip(S[i], range(N))
 		# print(list(dist_with_index))
 		# print(list(dist_with_index)[0])
 		dist_with_index = sorted(dist_with_index, key=lambda x: x[0], reverse=True)
-		print(dist_with_index)
+		# print(dist_with_index)
 		# print(dist_with_index[1][1])
 		neighbours_id = [dist_with_index[m][1] for m in range(k)]  # xi's k nearest neighbours
-		print("neigh",neighbours_id)
+		# print("neigh",neighbours_id)
 		for j in neighbours_id:  # xj is xi's neighbour
-			print(j)
+			# print(j)
 			A[i][j] = 1
-			A[j][i] = A[i][j]  # mutually
+			# A[j][i] = A[i][j]  # mutually
 	# print(A[i])
 	m = np.shape(A)[0]
-	print(m)
+	# print(m)
 	for i in range(m):
 		for j in range(m):
 			if j == i:
@@ -62,7 +62,8 @@ if __name__ == "__main__":
 	te = trainW(test1)
 	test2 = trainW1(test)
 
-	print(test1)
+	print("test1:\n",test1)
+	print("test2:\n",test2)
 	print(myKNN(test,3))
 	print(myKNN(test1,3))
 	print(myKNN(test2,3))
