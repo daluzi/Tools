@@ -191,7 +191,11 @@ class SR1:
 
 				subU = subU1 + subU2 + subU3
 
-				U[i_u] = U[i_u] - aerfa * subU
+				print("subU1:\n",subU1)
+				print("subU2:\n",subU2)
+				print("subU3:\n",subU3)
+				print("subU:\n",subU)
+				U[:,i_u] = U[:,i_u] - aerfa * subU[0]
 
 			#V
 			for i_v in range(n):
@@ -200,7 +204,7 @@ class SR1:
 					subV += (I[i_v][j_v] * (np.dot(U[:,i_v].T , V[:,j_v]) - R[i_v][j_v])) * U[:,j_v]
 				subV = subV + lamb2 * U[:,i_v]
 
-				V[:,i_v] = V[:,i_v] - aerfa * subV
+				V[:,i_v] = V[:,i_v] - aerfa * subV[0]
 			print("run%d" % i)
 
 		return U, V
