@@ -71,3 +71,8 @@ if __name__ == "__main__":
 	asd = [[1,2,3,4],[2,3,4,5]]
 	asd = [[asd[i][j] + 1 for j in range(len(asd[i]))] for i in range(len(asd))]#每个元素累加1
 	print("asd",asd)
+
+
+	print("-------------------")
+	Fri = np.argwhere(myKNN(test2,3)[0] == 1)
+	print(Fri[0])
