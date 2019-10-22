@@ -119,6 +119,9 @@ class SR1:
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
 		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001)
+		print("----------------------------------------------")
+		print("U:\n",U)
+		print("V:\n",V)
 		pass
 
 	def Update(self, R, k, r, lamb1, lamb2, aerfa):
@@ -167,12 +170,14 @@ class SR1:
 					# print("i_u\t",i_u)
 					# print("Fri[%d][0]\t" % f,Fri[f][0])
 					# print(U[:,Fri[f][0]].shape)
+					# print("asdasdd:\n",subU2on)
 					subU2on = subU2on + (metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])) * np.array(U[:,Fri[f][0]])
-					# print("asd",subU2on)
+					# print("asd",U[:,Fri[f][0]])
+					# print("")
 					subU2down = subU2down + metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])
-				# print(subU2on)
-				# print(subU2down)
-				subU2 = aerfa * (U[:,i_u] - (subU2on[0] / subU2down))
+				print("subU2on:\n", subU2on)
+				print("subU2down:\n", subU2down)
+				subU2 = aerfa * np.array(U[:,i_u] - (subU2on[0] / subU2down))
 
 				subU3 = np.zeros((r, 1))
 				subU3on = np.zeros((r, 1))
@@ -180,14 +185,14 @@ class SR1:
 				subU3onon = np.zeros((r, 1))
 				subU3downdown = 0
 				for g in range(len(Fri)):
-					for f in range(len(Fri)):
-						subU3onon = subU3onon + (metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])) * U[:,Fri[f][0]]
-						subU3downdown = subU3downdown + metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])
-						subU3down = subU3down + metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])
-					subU3on = subU3on + -(metrices.VectorSpaceSimilarity(R, I, i_u, Fri[g][0]) * (U[:,g] - subU3onon / subU3downdown))
-					subU3 = subU3 + (subU3on / subU3down)
+					# for f in range(len(Fri)):
+						# subU3onon = subU3onon + (metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])) * U[:,Fri[f][0]]
+						# subU3downdown = subU3downdown + metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])
+						# subU3down = subU3down + metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])
+					subU3on = subU3on + -(metrices.VectorSpaceSimilarity(R, I, i_u, Fri[g][0]) * np.array(U[:,g] - (subU2on[0] / subU2down)))
+					subU3 = subU3 + (subU3on / subU2down)
 					print("subU3 run\t\t:",g)
-				subU3 = aerfa * subU3
+				subU3 = aerfa * np.array(subU3)
 
 				subU = subU1 + subU2 + subU3
 
@@ -195,15 +200,15 @@ class SR1:
 				print("subU2:\n",subU2)
 				print("subU3:\n",subU3)
 				print("subU:\n",subU)
-				U[:,i_u] = U[:,i_u] - aerfa * subU[0]
+				U[:,i_u] = U[:,i_u] - aerfa * np.array(subU[0])
 
 			#V
 			for i_v in range(n):
 				subV = np.zeros((1, r))
 				for j_v in range(m):
-					subV += (I[i_v][j_v] * (np.dot(U[:,i_v].T , V[:,j_v]) - R[i_v][j_v])) * U[:,j_v]
-				subV = subV + lamb2 * U[:,i_v]
-
+					subV = subV + (I[j_v][i_v] * (np.dot(U[:,j_v].T , V[:,i_v]) - R[j_v][i_v])) * U[:,j_v]
+				subV = subV + lamb2 * V[:,i_v]
+				# print("subV:\n", subV)
 				V[:,i_v] = V[:,i_v] - aerfa * subV[0]
 			print("run%d" % i)
 
