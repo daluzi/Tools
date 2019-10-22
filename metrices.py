@@ -34,7 +34,7 @@ def VectorSpaceSimilarity(R,I,si,sf):
 	# print("sumRfj:\t",sumRfj)
 	# print("sumRij:\t",sumRij)
 	# print(simIF)
-	return simIF
+	return simIF + 0.0001
 
 '''
 	PCC
