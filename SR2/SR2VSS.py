@@ -14,7 +14,7 @@ import metrices
 from sklearn.metrics import mean_squared_error #均方误差
 from sklearn.metrics import mean_absolute_error #平方绝对误差
 import random
-
+import gc
 
 # 读取txt文件
 def ReadTxtData(filePath):
@@ -103,7 +103,7 @@ def myKNN(S, k):
 		for j in neighbours_id:  # xj is xi's neighbour
 			# print(j)
 			A[i][j] = 1
-			A[j][i] = A[i][j]  # mutually
+			# A[j][i] = A[i][j]  # mutually
 	# print(A[i])
 	m = np.shape(A)[0]
 	for i in range(m):
@@ -118,13 +118,17 @@ class SR2:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.01)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
+		new = np.dot(U.T, V)
+		self.test = test
+		self.new = new
+		self.r = r
 		pass
 
-	def Update(self, R, k, r, lamb1, lamb2, aerfa):
+	def Update(self, R, k, r, lamb1, lamb2, aerfa, aerfa1):
 		'''
 
 		:param R: user-item matrix
@@ -140,8 +144,8 @@ class SR2:
 		I[I > 0] = 1
 
 		m, n = R.shape
-		U = np.array(np.random.random((r, m)))
-		V = np.array(np.random.random((r, n)))
+		U = np.array(np.random.random((r, m)),dtype='float16')
+		V = np.array(np.random.random((r, n)),dtype='float16')
 
 		#这里可以通过KNN找到user的朋友矩阵
 		simiX = trainW(R)
@@ -152,7 +156,7 @@ class SR2:
 		for i in range(k):
 			# U
 			for i_u in range(m):
-				subU1 = np.zeros((r, 1))
+				subU1 = np.zeros((r, 1),dtype='float16')
 				for j_u in range(n):
 					# print(np.array(U[:,i_u].T).shape, np.array(V[:,j_u]).shape)
 					# print(U[:,j_u].T)
@@ -178,7 +182,9 @@ class SR2:
 				# print("subU1:\n",subU1)
 				# print("subU2:\n",subU2)
 				# print("subU:\n",subU)
-				U[:,i_u] = U[:,i_u] - aerfa * np.array(subU[0])
+				del subU1
+				del subU2
+				U[:,i_u] = U[:,i_u] - aerfa1 * np.array(subU[0])
 
 			#V
 			for i_v in range(n):
@@ -187,7 +193,7 @@ class SR2:
 					subV = subV + (I[j_v][i_v] * (np.dot(U[:,j_v].T , V[:,i_v]) - R[j_v][i_v])) * U[:,j_v]
 				subV = subV + lamb2 * V[:,i_v]
 				# print("subV:\n", subV)
-				V[:,i_v] = V[:,i_v] - aerfa * subV[0]
+				V[:,i_v] = V[:,i_v] - aerfa1 * subV[0]
 			print("run%d" % i)
 
 		return U, V
@@ -197,3 +203,16 @@ if __name__ == '__main__':
 	filePath = './pets/ratings.txt'
 	k = 10
 	sr2 = SR2(filePath, k)
+	newX = [[sr2.new[i][j] + sr2.r for j in range(len(sr2.new[i]))] for i in range(len(sr2.new))]  # 每个元素累加r
+
+	xiabao = np.argwhere(sr2.test > 0)  # 获取测试集中值大于0的元素的下标
+	y_true = []
+	y_pred = []
+	for i, j in xiabao:
+		y_true.append(sr2.test[i][j])
+		y_pred.append(newX[i][j])
+
+	print("y_pred", y_pred)
+	print("y_true", y_true)
+	print("SR1VSS RMSE:", sqrt(mean_squared_error(y_true, y_pred)))
+	print("SR1VSS MAE:", mean_absolute_error(y_true, y_pred))
