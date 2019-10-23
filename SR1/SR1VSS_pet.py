@@ -77,7 +77,7 @@ def ProData(dataSet):
 	trainR = total / lentrc
 	print("trainR:\n", trainR)
 
-	return trainR, train_matrix, test_matrix #r没什么用处
+	return trainR, train_matrix, test_matrix
 
 # 相似矩阵
 def trainW(v):
@@ -103,7 +103,7 @@ def myKNN(S, k):
 		for j in neighbours_id:  # xj is xi's neighbour
 			# print(j)
 			A[i][j] = 1
-			A[j][i] = A[i][j]  # mutually
+			# A[j][i] = A[i][j]  # mutually
 	# print(A[i])
 	m = np.shape(A)[0]
 	for i in range(m):
@@ -122,6 +122,10 @@ class SR1:
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
+		new = np.dot(U.T, V)
+		self.test = test
+		self.new = new
+		self.r = r
 		pass
 
 	def Update(self, R, k, r, lamb1, lamb2, aerfa):
@@ -164,7 +168,7 @@ class SR1:
 				subU2on = np.zeros((r, 1))
 				subU2down = 0
 				Fri = np.argwhere(W[i_u] == 1)
-				print(len(Fri))
+				# print(len(Fri))
 				for f in range(len(Fri)):
 					# print(Fri[f][0])
 					# print("i_u\t",i_u)
@@ -175,8 +179,8 @@ class SR1:
 					# print("asd",U[:,Fri[f][0]])
 					# print("")
 					subU2down = subU2down + metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])
-				print("subU2on:\n", subU2on)
-				print("subU2down:\n", subU2down)
+				# print("subU2on:\n", subU2on)
+				# print("subU2down:\n", subU2down)
 				subU2 = aerfa * np.array(U[:,i_u] - (subU2on[0] / subU2down))
 
 				subU3 = np.zeros((r, 1))
@@ -191,15 +195,15 @@ class SR1:
 						# subU3down = subU3down + metrices.VectorSpaceSimilarity(R, I, Fri[g][0], Fri[f][0])
 					subU3on = subU3on + -(metrices.VectorSpaceSimilarity(R, I, i_u, Fri[g][0]) * np.array(U[:,g] - (subU2on[0] / subU2down)))
 					subU3 = subU3 + (subU3on / subU2down)
-					print("subU3 run\t\t:",g)
+					# print("subU3 run\t\t:",g)
 				subU3 = aerfa * np.array(subU3)
 
 				subU = subU1 + subU2 + subU3
 
-				print("subU1:\n",subU1)
-				print("subU2:\n",subU2)
-				print("subU3:\n",subU3)
-				print("subU:\n",subU)
+				# print("subU1:\n",subU1)
+				# print("subU2:\n",subU2)
+				# print("subU3:\n",subU3)
+				# print("subU:\n",subU)
 				U[:,i_u] = U[:,i_u] - aerfa * np.array(subU[0])
 
 			#V
@@ -219,3 +223,16 @@ if __name__ == '__main__':
 	filePath = './pets/ratings.txt'
 	k = 10
 	sr1 = SR1(filePath, k)
+	newX = [[sr1.new[i][j] + sr1.r for j in range(len(sr1.new[i]))] for i in range(len(sr1.new))]  # 每个元素累加r
+
+	xiabao = np.argwhere(sr1.test > 0)  # 获取测试集中值大于0的元素的下标
+	y_true = []
+	y_pred = []
+	for i, j in xiabao:
+		y_true.append(sr1.test[i][j])
+		y_pred.append(newX[i][j])
+
+	print("y_pred", y_pred)
+	print("y_true", y_true)
+	print("SR1VSS RMSE:", sqrt(mean_squared_error(y_true, y_pred)))
+	print("SR1VSS MAE:", mean_absolute_error(y_true, y_pred))
