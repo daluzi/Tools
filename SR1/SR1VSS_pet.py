@@ -59,7 +59,7 @@ def ProData(dataSet):
 	print(line1)
 
 	for i in range(hang):
-		randomResult = random.sample(range(1, lie), int(0.2 * lie))
+		randomResult = random.sample(range(1, lie), int(0.1 * lie))
 		for j in range(len(randomResult)):
 			o = randomResult[j]
 			test_matrix[i][o] = train_matrix[i][o]
@@ -103,7 +103,7 @@ def myKNN(S, k):
 		for j in neighbours_id:  # xj is xi's neighbour
 			# print(j)
 			A[i][j] = 1
-			# A[j][i] = A[i][j]  # mutually
+			A[j][i] = A[i][j]  # mutually
 	# print(A[i])
 	m = np.shape(A)[0]
 	for i in range(m):
@@ -118,7 +118,7 @@ class SR1:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.01, 0.01)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
@@ -128,7 +128,7 @@ class SR1:
 		self.r = r
 		pass
 
-	def Update(self, R, k, r, lamb1, lamb2, aerfa):
+	def Update(self, R, k, r, lamb1, lamb2, aerfa, aerfa1):
 		'''
 
 		:param R: user-item matrix
@@ -204,7 +204,7 @@ class SR1:
 				# print("subU2:\n",subU2)
 				# print("subU3:\n",subU3)
 				# print("subU:\n",subU)
-				U[:,i_u] = U[:,i_u] - aerfa * np.array(subU[0])
+				U[:,i_u] = U[:,i_u] - aerfa1 * np.array(subU[0])
 
 			#V
 			for i_v in range(n):
@@ -213,7 +213,7 @@ class SR1:
 					subV = subV + (I[j_v][i_v] * (np.dot(U[:,j_v].T , V[:,i_v]) - R[j_v][i_v])) * U[:,j_v]
 				subV = subV + lamb2 * V[:,i_v]
 				# print("subV:\n", subV)
-				V[:,i_v] = V[:,i_v] - aerfa * subV[0]
+				V[:,i_v] = V[:,i_v] - aerfa1 * subV[0]
 			print("run%d" % i)
 
 		return U, V
@@ -223,8 +223,8 @@ if __name__ == '__main__':
 	filePath = './pets/ratings.txt'
 	k = 10
 	sr1 = SR1(filePath, k)
-	newX = [[sr1.new[i][j] + sr1.r for j in range(len(sr1.new[i]))] for i in range(len(sr1.new))]  # 每个元素累加r
-
+	# newX = [[sr1.new[i][j] + sr1.r for j in range(len(sr1.new[i]))] for i in range(len(sr1.new))]  # 每个元素累加r
+	newX = sr1.new
 	xiabao = np.argwhere(sr1.test > 0)  # 获取测试集中值大于0的元素的下标
 	y_true = []
 	y_pred = []
