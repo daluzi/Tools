@@ -59,7 +59,7 @@ def ProData(dataSet):
 	print(line1)
 
 	for i in range(hang):
-		randomResult = random.sample(range(1, lie), int(0.2 * lie))
+		randomResult = random.sample(range(1, lie), int(0.1 * lie))
 		for j in range(len(randomResult)):
 			o = randomResult[j]
 			test_matrix[i][o] = train_matrix[i][o]
@@ -103,7 +103,7 @@ def myKNN(S, k):
 		for j in neighbours_id:  # xj is xi's neighbour
 			# print(j)
 			A[i][j] = 1
-			# A[j][i] = A[i][j]  # mutually
+			A[j][i] = A[i][j]  # mutually
 	# print(A[i])
 	m = np.shape(A)[0]
 	for i in range(m):
@@ -118,7 +118,7 @@ class SR2:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.01)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.01, 0.01)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
@@ -137,6 +137,7 @@ class SR2:
 		:param lamb1: used to calculate U
 		:param lamb2: used to calculate V
 		:param aerfa:
+		:param aerfa1:
 		:return:
 		'''
 		print("R:\n",R)
@@ -203,7 +204,8 @@ if __name__ == '__main__':
 	filePath = './pets/ratings.txt'
 	k = 10
 	sr2 = SR2(filePath, k)
-	newX = [[sr2.new[i][j] + sr2.r for j in range(len(sr2.new[i]))] for i in range(len(sr2.new))]  # 每个元素累加r
+	# newX = [[sr2.new[i][j] + sr2.r for j in range(len(sr2.new[i]))] for i in range(len(sr2.new))]  # 每个元素累加r
+	newX = sr2.new
 
 	xiabao = np.argwhere(sr2.test > 0)  # 获取测试集中值大于0的元素的下标
 	y_true = []
