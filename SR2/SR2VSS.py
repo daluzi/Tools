@@ -103,7 +103,7 @@ def myKNN(S, k):
 		for j in neighbours_id:  # xj is xi's neighbour
 			# print(j)
 			A[i][j] = 1
-			A[j][i] = A[i][j]  # mutually
+			# A[j][i] = A[i][j]  # mutually
 	# print(A[i])
 	m = np.shape(A)[0]
 	for i in range(m):
@@ -118,7 +118,7 @@ class SR2:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.01, 0.01)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.001)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
@@ -202,7 +202,7 @@ class SR2:
 
 if __name__ == '__main__':
 	filePath = './pets/ratings.txt'
-	k = 10
+	k = 200
 	sr2 = SR2(filePath, k)
 	# newX = [[sr2.new[i][j] + sr2.r for j in range(len(sr2.new[i]))] for i in range(len(sr2.new))]  # 每个元素累加r
 	newX = sr2.new
