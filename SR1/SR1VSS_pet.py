@@ -8,9 +8,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import metrices
 import numpy as np
 from numpy import *
-import random_test
+# import random_test
 import copy
-import metrices
 from sklearn.metrics import mean_squared_error #均方误差
 from sklearn.metrics import mean_absolute_error #平方绝对误差
 import random
@@ -103,7 +102,7 @@ def myKNN(S, k):
 		for j in neighbours_id:  # xj is xi's neighbour
 			# print(j)
 			A[i][j] = 1
-			# A[j][i] = A[i][j]  # mutually
+			A[j][i] = A[i][j]  # mutually
 	# print(A[i])
 	m = np.shape(A)[0]
 	for i in range(m):
@@ -118,7 +117,7 @@ class SR1:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.001)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.01)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
