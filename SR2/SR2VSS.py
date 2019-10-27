@@ -118,7 +118,7 @@ class SR2:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.01)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.02)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
@@ -202,7 +202,7 @@ class SR2:
 
 if __name__ == '__main__':
 	filePath = './pets/ratings.txt'
-	k = 200
+	k = 300
 	sr2 = SR2(filePath, k)
 	# newX = [[sr2.new[i][j] + sr2.r for j in range(len(sr2.new[i]))] for i in range(len(sr2.new))]  # 每个元素累加r
 	newX = sr2.new
