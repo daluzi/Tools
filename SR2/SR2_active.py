@@ -164,7 +164,7 @@ class SR2:
 					# print(U[:,j_u].T)
 					# print(V[:,j_u])
 					# print(I[i_u][j_u])
-					subU1 = subU1 + (I[i_u][j_u] * (np.dot(U[:,i_u].T , V[:,j_u]) - R[i_u][j_u])) * V[:,j_u]
+					subU1 = np.round(subU1 + (I[i_u][j_u] * (np.dot(U[:,i_u].T , V[:,j_u]) - R[i_u][j_u])) * V[:,j_u], 6)
 				subU1 = subU1 + lamb1 * U[:,i_u]
 
 				subU2on = np.zeros((r, 1))
@@ -176,7 +176,7 @@ class SR2:
 					# print("Fri[%d][0]\t" % f,Fri[f][0])
 					# print(U[:,Fri[f][0]].shape)
 					# print("asdasdd:\n",subU2on)
-					subU2on = subU2on + (metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])) * (np.array(U[:,i_u]) - np.array(U[:,Fri[f][0]]))
+					subU2on = np.round(subU2on + (metrices.VectorSpaceSimilarity(R, I, i_u, Fri[f][0])) * (np.array(U[:,i_u]) - np.array(U[:,Fri[f][0]])), 6)
 				# print("subU2on:\n", subU2on)
 				subU2 = aerfa * subU2on[0]
 				subU = subU1 + 2 * subU2
@@ -192,7 +192,7 @@ class SR2:
 			for i_v in range(n):
 				subV = np.zeros((1, r))
 				for j_v in range(m):
-					subV = subV + (I[j_v][i_v] * (np.dot(U[:,j_v].T , V[:,i_v]) - R[j_v][i_v])) * U[:,j_v]
+					subV = np.round(subV + (I[j_v][i_v] * (np.dot(U[:,j_v].T , V[:,i_v]) - R[j_v][i_v])) * U[:,j_v], 6)
 				subV = subV + lamb2 * V[:,i_v]
 				# print("subV:\n", subV)
 				V[:,i_v] = V[:,i_v] - aerfa1 * subV[0]
