@@ -119,7 +119,7 @@ class SR2:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.01)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.001)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
@@ -146,8 +146,8 @@ class SR2:
 		I[I > 0] = 1
 
 		m, n = R.shape
-		U = np.array(np.random.random((r, m)),dtype='float16')
-		V = np.array(np.random.random((r, n)),dtype='float16')
+		U = np.array(np.random.random((r, m)),dtype='float64')
+		V = np.array(np.random.random((r, n)),dtype='float64')
 
 		#这里可以通过KNN找到user的朋友矩阵
 		simiX = trainW(R)
@@ -158,7 +158,7 @@ class SR2:
 		for i in range(k):
 			# U
 			for i_u in range(m):
-				subU1 = np.zeros((r, 1),dtype='float16')
+				subU1 = np.zeros((r, 1),dtype='float64')
 				for j_u in range(n):
 					# print(np.array(U[:,i_u].T).shape, np.array(V[:,j_u]).shape)
 					# print(U[:,j_u].T)
