@@ -24,3 +24,11 @@ print(nd1[(nd1>3)&(nd1<10)])
 print(nd1[[1,2]])
 print(nd1[1:3,:])
 print(nd1[:,1:3])
+
+a = 1000
+while a > 0:
+	for i in range(5):
+		if i == 2:
+			break
+		print(i)
+	a = a -1
