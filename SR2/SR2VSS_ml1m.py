@@ -61,7 +61,7 @@ def ProData(dataSet):
 	print(line1)
 
 	for i in range(hang):
-		randomResult = random.sample(range(1, lie), int(0.2 * lie))
+		randomResult = random.sample(range(1, lie), int(0.1 * lie))
 		for j in range(len(randomResult)):
 			o = randomResult[j]
 			test_matrix[i][o] = train_matrix[i][o]
@@ -120,7 +120,7 @@ class SR2:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.0001)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.00005)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
