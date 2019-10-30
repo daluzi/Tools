@@ -117,7 +117,7 @@ class SR1:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.001)
+		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.0001)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
