@@ -33,7 +33,7 @@ def ProData(dataSet):
 		dataSetSecondColu.append(dataSet[i][1])
 	dataSetSecondColu = list(set(list(map(lambda x: float32(x), dataSetSecondColu))))  # 字符型转为int，然后去重
 	# dataSetSecondColu = dataSetSecondColu))#去重
-	dataSetSecondColu.sort()  # 排序
+	dataSetSecondColu.sort()  # 排序,
 	print(dataSetSecondColu)
 	# print("下标:\n",dataSetSecondColu.index(149532))
 	user_item_matrix = np.zeros((2000, 32725))
