@@ -46,3 +46,6 @@ print(2 * c)
 print(c * 2)
 print(type(c))
 print(np.array(c) * 2)
+
+print("-----------------4")
+print(np.dot(2, c))
