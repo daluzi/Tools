@@ -119,7 +119,7 @@ class SR1:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
-		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.0001)
+		U, V = self.Update(train, k, 50, 0.001, 0.001, 0.001, 0.00005)
 		print("----------------------------------------------")
 		print("U:\n",U)
 		print("V:\n",V)
@@ -224,7 +224,7 @@ class SR1:
 
 if __name__ == '__main__':
 	filePath = './movielens latest/ratings.txt'
-	k = 10
+	k = 100
 	sr1 = SR1(filePath, k)
 	# newX = [[sr1.new[i][j] + sr1.r for j in range(len(sr1.new[i]))] for i in range(len(sr1.new))]  # 每个元素累加r
 	newX = sr1.new
