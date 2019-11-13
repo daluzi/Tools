@@ -4,13 +4,13 @@
 # @File     : cora_content.py
 # @Software : PyCharm
 
-import numpy as  np
 import os
 import scipy.io as sio
 import numpy as np
 
 file_path = "./cora/cora.content"
 mat_path = "./cora/cora_content.mat"
+label_path = './cora/cora_label.mat'
 
 def ReadTxtData(filePath):
 	resultData = []
@@ -19,6 +19,7 @@ def ReadTxtData(filePath):
 	with open(filePath,"r") as f:
 		for line in f:
 			f = list(line.strip("\n").split("\t"))
+			# print(f[0])
 			art.append(f[0])
 			# del f[0]
 			resultData.append(f)
@@ -35,7 +36,10 @@ print("gnd:\n",g)
 # art = list(map(lambda x:int(x), art))
 # art = sorted(art,reverse=False)
 
+print("asd",art)
 art = np.array(list(map(lambda x:int(x), art)))
+sio.savemat(label_path, {'label':art})
+
 art = sorted(art,reverse=False)
 print("art:\n",art)
 # art = np.array(art)
