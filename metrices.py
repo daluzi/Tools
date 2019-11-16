@@ -1,8 +1,8 @@
-# _*_ coding: utf-8 _*_
-# @Author   : daluzi
-# @time     : 2019/10/10 15:26
-# @File     : metrices.py
-# @Software : PyCharm
+# # _*_ coding: utf-8 _*_
+# # @Author   : daluzi
+# # @time     : 2019/10/10 15:26
+# # @File     : metrices.py
+# # @Software : PyCharm
 import numpy as np
 import math
 
@@ -65,4 +65,14 @@ def PearsonCorrelationCoefficient(R,I,si,sf):
 
 R = [[1,2,3,4,5],[2,0,3,0,5],[2,3,0,0,0]]
 I = [[1,0,1,0,0],[1,1,0,0,1],[1,1,1,1,1]]
-VectorSpaceSimilarity(R, I, 1,2)
+print(VectorSpaceSimilarity(R, I, 1, 2))
+
+
+'''
+	0-1 wwighting
+'''
+def weighting01(R):
+	row, column = np.shape(R)
+
+	pass
+
