@@ -363,6 +363,25 @@ $ docker image rm [imageName]
 
 
 
+
+
+docker save :将指定镜像保存成tar归档文件
+docker save [OPTTONS] IMAGE[工MAGE...]
+将指定镜像保存成tar归档文件，docker load的逆操作。保存后再
+加载（saved-loaded）的镜像不会丢失提交历史和层，可以回滚
+实例一∶将镜像ID为1316871b180b，保存为/root/dockerfile/1ogg
+er1.o.tar文件
+#docker save 1316871b180b -o /root/dockerfile/logger1.0.tar
+-o:指定输出到的文件
+
+
+
+docker load:从tar归档文件或者标准输入流载入镜像
+docker load [OPTIONS]
+实例一:将fabric-orderer.1.0.1.tar文件加载到images列表中
+docker load -i fabric-orderer.1.0.1.tar
+-i，指定输入tar文件
+
 #### reference:
 
 * [Docker官网](https://docs.docker.com/)
