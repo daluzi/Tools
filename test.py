@@ -12,3 +12,5 @@ print("%2d" % (num))
 print("%02d" % (num))
 print("%-2d" % (num))
 print("%.2d" % (num))
+
+print("{0:<10}{1:>5}".format(12,24))
