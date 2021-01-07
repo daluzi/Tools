@@ -209,141 +209,247 @@ import numpy as np
 # #         ndcg_k = pd.Series(ndcg_vector).sum() / self.usernum
 # #         return ndcg_k
 # change this if using K > 100
-denominator_table = np.log2( np.arange( 2, 102 ))
-def dcg_at_k( r, k, method = 1 ):
-    """Score is discounted cumulative gain (dcg)
-    Relevance is positive real values.  Can use binary
-    as the previous methods.
-    Example from
-    http://www.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
-    >>> r = [3, 2, 3, 0, 0, 1, 2, 2, 3, 0]
-    >>> dcg_at_k(r, 1)
-    3.0
-    >>> dcg_at_k(r, 1, method=1)
-    3.0
-    >>> dcg_at_k(r, 2)
-    5.0
-    >>> dcg_at_k(r, 2, method=1)
-    4.2618595071429155
-    >>> dcg_at_k(r, 10)
-    9.6051177391888114
-    >>> dcg_at_k(r, 11)
-    9.6051177391888114
-    Args:
-        r: Relevance scores (list or numpy) in rank order
-            (first element is the first item)
-        k: Number of results to consider
-        method: If 0 then weights are [1.0, 1.0, 0.6309, 0.5, 0.4307, ...]
-                If 1 then weights are [1.0, 0.6309, 0.5, 0.4307, ...]
-    Returns:
-        Discounted cumulative gain
-    """
-    r = np.asfarray(r)[:k]
-    if r.size:
-        if method == 0:
-            return r[0] + np.sum(r[1:] / np.log2(np.arange(2, r.size + 1)))
-        elif method == 1:
-            # return np.sum(r / np.log2(np.arange(2, r.size + 2)))
-            return np.sum(r / denominator_table[:r.shape[0]])
-        else:
-            raise ValueError('method must be 0 or 1.')
-    return 0.
-
-# ndcg with explicitly given best and worst possible relevances
-# for recommendations including unrated movies
-def get_ndcg_2(r, best_r, worst_r, k, method=1):
-    dcg_max = dcg_at_k(sorted(best_r, reverse=True), k, method)
-
-    if worst_r == None:
-        dcg_min = 0.
-    else:
-        dcg_min = dcg_at_k(sorted(worst_r), k, method)
-
-    # assert( dcg_max >= dcg_min )
-
-    if not dcg_max:
-        return 0.
-
-    dcg = dcg_at_k(r, k, method)
-
-    # print dcg_min, dcg, dcg_max
-
-    return (dcg - dcg_min) / (dcg_max - dcg_min)
 
 
+
+# denominator_table = np.log2( np.arange( 2, 102 ))
+# def dcg_at_k( r, k, method = 1 ):
+#     """Score is discounted cumulative gain (dcg)
+#     Relevance is positive real values.  Can use binary
+#     as the previous methods.
+#     Example from
+#     http://www.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
+#     >>> r = [3, 2, 3, 0, 0, 1, 2, 2, 3, 0]
+#     >>> dcg_at_k(r, 1)
+#     3.0
+#     >>> dcg_at_k(r, 1, method=1)
+#     3.0
+#     >>> dcg_at_k(r, 2)
+#     5.0
+#     >>> dcg_at_k(r, 2, method=1)
+#     4.2618595071429155
+#     >>> dcg_at_k(r, 10)
+#     9.6051177391888114
+#     >>> dcg_at_k(r, 11)
+#     9.6051177391888114
+#     Args:
+#         r: Relevance scores (list or numpy) in rank order
+#             (first element is the first item)
+#         k: Number of results to consider
+#         method: If 0 then weights are [1.0, 1.0, 0.6309, 0.5, 0.4307, ...]
+#                 If 1 then weights are [1.0, 0.6309, 0.5, 0.4307, ...]
+#     Returns:
+#         Discounted cumulative gain
+#     """
+#     r = np.asfarray(r)[:k]
+#     if r.size:
+#         if method == 0:
+#             return r[0] + np.sum(r[1:] / np.log2(np.arange(2, r.size + 1)))
+#         elif method == 1:
+#             # return np.sum(r / np.log2(np.arange(2, r.size + 2)))
+#             return np.sum(r / denominator_table[:r.shape[0]])
+#         else:
+#             raise ValueError('method must be 0 or 1.')
+#     return 0.
+#
+# # ndcg with explicitly given best and worst possible relevances
+# # for recommendations including unrated movies
+# def get_ndcg_2(r, best_r, worst_r, k, method=1):
+#     dcg_max = dcg_at_k(sorted(best_r, reverse=True), k, method)
+#
+#     if worst_r == None:
+#         dcg_min = 0.
+#     else:
+#         dcg_min = dcg_at_k(sorted(worst_r), k, method)
+#
+#     # assert( dcg_max >= dcg_min )
+#
+#     if not dcg_max:
+#         return 0.
+#
+#     dcg = dcg_at_k(r, k, method)
+#
+#     # print dcg_min, dcg, dcg_max
+#
+#     return (dcg - dcg_min) / (dcg_max - dcg_min)
+#
+#
+# import numpy as np
+# from sklearn.metrics import ndcg_score
+#
+# def getRatingMatrix(filename):
+#     data = []
+#     data_fo = []
+#     feature = []
+#     with open(filename) as file:
+#         for line in file:
+#             d = line[:-1].split(",")
+#             list1 = [int(x) for x in d[:-1]]
+#             list2 = [int(x) for x in d[-1].split(" ")]
+#
+#             data.append(list1)
+#             data_fo.append(list2)
+#             for i in list2:
+#                 feature.append(i)
+#     data = np.array(data)
+#     # data_fo = np.array(data_fo)
+#
+#     num_users = data[:, 0].max() + 1
+#     num_items = data[:, 1].max() + 1
+#     num_features = max(feature) + 1
+#     # print num_features
+#
+#     # create rating matrix, and user_opinion, item_opinion matrices
+#     # user_opinion: user preference for each feature
+#     # item_opinion: item performance on each feature
+#     rating_matrix = np.zeros((num_users, num_items), dtype=float)
+#     user_opinion = np.full((num_users, num_features), np.nan)
+#     item_opinion = np.full((num_items, num_features), np.nan)
+#     # update the matrices with input data
+#     # get the accumulated feature opinion scores for users and items.
+#     for i in range(len(data)):
+#         user_id, item_id, rating = data[i]
+#         # print type(data_fo)
+#         rating_matrix[user_id][item_id] = rating
+#         num_pos = 0
+#         num_neg = 0
+#         for j in range(0, len(data_fo[i]), 2):
+#             # for user, count the frequency
+#             # print data_fo[i][j]
+#             if np.isnan(user_opinion[user_id][data_fo[i][j]]):
+#                 user_opinion[user_id][data_fo[i][j]] = 1
+#             else:
+#                 user_opinion[user_id][data_fo[i][j]] += 1
+#             # for item, count the sentiment score
+#             if np.isnan(item_opinion[item_id][data_fo[i][j]]):
+#                 item_opinion[item_id][data_fo[i][j]] = data_fo[i][j + 1]
+#             else:
+#                 item_opinion[item_id][data_fo[i][j]] += data_fo[i][j + 1]
+#
+#     return rating_matrix, user_opinion, item_opinion
+#
+#
+# if __name__ == "__main__":
+#     test_file = "./data/yelp_test.txt"
+#     pred_rating_file = "./results/pred_rating.txt"
+#     # test on test data with the trained model
+#     print ("********** Load test data **********")
+#     test_rating, user_opinion_test, item_opinion_test = getRatingMatrix(test_file)
+#     print ("Number of users", test_rating.shape[0])
+#     print ("Number of items", test_rating.shape[1])
+#
+#     print ("*********** Loading pred_rating data *************")
+#     pred_rating = np.loadtxt(pred_rating_file)
+#     print ("*********** complete Load **************")
+#     # get the NDCG results
+#     print ("********** NDCG **********")
+#     true_relevance = np.asarray([[10, 0, 0, 1, 5]])
+#     scores = np.asarray([[.1, .2, .3, 4, 70]])
+#     print(type(true_relevance))
+#     print(ndcg_score(true_relevance, scores))
+#
+#     print(type(test_rating),type(np.asarray(pred_rating_file)))
+#     print (ndcg_score(test_rating,np.asarray(pred_rating)))
+
+
+
+
+
+
+
+
+
+
+
+
+# ==========================================================
 import numpy as np
-from sklearn.metrics import ndcg_score
+import copy
+from math import log
 
-def getRatingMatrix(filename):
-    data = []
-    data_fo = []
-    feature = []
-    with open(filename) as file:
-        for line in file:
-            d = line[:-1].split(",")
-            list1 = [int(x) for x in d[:-1]]
-            list2 = [int(x) for x in d[-1].split(" ")]
+# input data
+ideal = np.array([5,5,4,4,3,3,2,2,1,1])
+relevant_score_list = np.array([5.0,5.0,4.0,4.0,3.0,3.0,2.0,2.0,1.0,1.0])
+recall_list = np.array([8,11,2,12,3,1,5,4,13,7])
 
-            data.append(list1)
-            data_fo.append(list2)
-            for i in list2:
-                feature.append(i)
-    data = np.array(data)
-    # data_fo = np.array(data_fo)
+def dcg(rscore, m):
+    return (2.0 ** rscore - 1.0) / np.log2(2.0 + m)
 
-    num_users = data[:, 0].max() + 1
-    num_items = data[:, 1].max() + 1
-    num_features = max(feature) + 1
-    # print num_features
+def dcg_k(rslist,rlist,k):
+    # 计算第k个dcg值
+    dcgscore_list = [0.0 for i in range(11)]##计算1,2,...,k的dcg值
+    for i in range(k):
+        relevant_score = 0
+        if rlist[i] < len(rslist):
+            relevant_score = rslist[rlist[i]-1]
+        dcgscore_list[i+1] = dcgscore_list[i] + dcg(relevant_score, i)
+    return dcgscore_list;
 
-    # create rating matrix, and user_opinion, item_opinion matrices
-    # user_opinion: user preference for each feature
-    # item_opinion: item performance on each feature
-    rating_matrix = np.zeros((num_users, num_items), dtype=float)
-    user_opinion = np.full((num_users, num_features), np.nan)
-    item_opinion = np.full((num_items, num_features), np.nan)
-    # update the matrices with input data
-    # get the accumulated feature opinion scores for users and items.
-    for i in range(len(data)):
-        user_id, item_id, rating = data[i]
-        # print type(data_fo)
-        rating_matrix[user_id][item_id] = rating
-        num_pos = 0
-        num_neg = 0
-        for j in range(0, len(data_fo[i]), 2):
-            # for user, count the frequency
-            # print data_fo[i][j]
-            if np.isnan(user_opinion[user_id][data_fo[i][j]]):
-                user_opinion[user_id][data_fo[i][j]] = 1
-            else:
-                user_opinion[user_id][data_fo[i][j]] += 1
-            # for item, count the sentiment score
-            if np.isnan(item_opinion[item_id][data_fo[i][j]]):
-                item_opinion[item_id][data_fo[i][j]] = data_fo[i][j + 1]
-            else:
-                item_opinion[item_id][data_fo[i][j]] += data_fo[i][j + 1]
+def idcg_k(ideal,k):
+    # idcg是一个系统最理想情况下的返回结果排序，也就是一个案例中所给的最佳排序
+    idcgscore_list = [0.0 for i in range(11)] #计算1,2,...,k的idcg值
+    for i in range(k):
+        idcgscore_list[i+1] = idcgscore_list[i] + dcg(ideal[i], i)
+    return idcgscore_list;
 
-    return rating_matrix, user_opinion, item_opinion
+# def ndcg(rslist,rlist,k):
+#     dcgscore_list = dcg_k(rslist,rlist,k)
+#     # 计算归一化因子z, 最完美情况应该是recall结果按照相关性分数降序排列
+#     idcgscore_list = idcg_k(ideal,k)
+#
+#     ndcg_list = [0.0 for i in range(k)]
+#     for i in range(k):
+#         ndcg_list[i] = round(dcgscore_list[i+1] / idcgscore_list[i+1], 3)
+#     print(ndcg_list)
 
 
-if __name__ == "__main__":
-    test_file = "./data/yelp_test.txt"
-    pred_rating_file = "./results/pred_rating.txt"
-    # test on test data with the trained model
-    print ("********** Load test data **********")
-    test_rating, user_opinion_test, item_opinion_test = getRatingMatrix(test_file)
-    print ("Number of users", test_rating.shape[0])
-    print ("Number of items", test_rating.shape[1])
+def ndcg(ideal, rlist, k):
+    recall = [0.0 for i in range(k)]
+    for i in range(k):
+        if rlist[i] <= len(ideal):
+            recall[i] = ideal[rlist[i]-1]
 
-    print ("*********** Loading pred_rating data *************")
-    pred_rating = np.loadtxt(pred_rating_file)
-    print ("*********** complete Load **************")
-    # get the NDCG results
-    print ("********** NDCG **********")
-    true_relevance = np.asarray([[10, 0, 0, 1, 5]])
-    scores = np.asarray([[.1, .2, .3, 4, 70]])
-    print(type(true_relevance))
-    print(ndcg_score(true_relevance, scores))
+    dcg, dcg_max, ndcg = 0.0, 0.0, 0.0
+    for i, (true, predict) in enumerate(zip(ideal, recall)):
+        dcg += (2 ** predict - 1) / log(2 + i)
+        dcg_max += (2 ** true -1) / log(2 + i)
+        ndcg = dcg / dcg_max
+    return ndcg
 
-    print(type(test_rating),type(np.asarray(pred_rating_file)))
-    print (ndcg_score(test_rating,np.asarray(pred_rating)))
+print(ndcg(relevant_score_list,recall_list,10))
+# ndcg(relevant_score_list,recall_list,10)
+print(ndcg(ideal, recall_list, 10))
+
+
+# =========================================
+# # another version about NDCG
+# import numpy as np
+# def DCG(label_list):
+#     dcgsum = 0
+#     for i in range(len(label_list)):
+#         dcg = (2**label_list[i] - 1)/np.log2(i+2)
+#         dcgsum += dcg
+#     return dcgsum
+#
+#
+# #ndcg 计算
+# def NDCG(label_list,top_n):
+#     #没有设定topn
+#     if top_n==None:
+#         dcg = DCG(label_list)
+#         ideal_list = sorted(label_list, reverse=True)
+#         ideal_dcg = DCG(ideal_list)
+#         if ideal_dcg == 0:
+#             return 0
+#         return dcg/ideal_dcg
+#     #设定top n
+#     else:
+#         dcg = DCG(label_list[0:top_n])
+#         ideal_list = sorted(label_list, reverse=True)
+#         ideal_dcg = DCG(ideal_list[0:top_n])
+#         if ideal_dcg == 0:
+#             return 0
+#         return dcg/ideal_dcg
+# print(NDCG([3,2,0,1,1,3,0,0], 5))
+# =========================================
+
