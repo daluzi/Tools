@@ -13,6 +13,7 @@ import copy
 from sklearn.metrics import mean_squared_error #均方误差
 from sklearn.metrics import mean_absolute_error #平方绝对误差
 import random
+import time
 
 
 # 读取txt文件
@@ -117,8 +118,11 @@ class SR1:
 	def __init__(self,filepath,k):
 		readData = ReadTxtData(filepath)#读取文件'
 		r, train, test = ProData(readData)
+		SR1_start_time = time.time()
 		U, V = self.Update(train, k, 10, 0.001, 0.001, 0.001, 0.02)
+		SR1_end_time = time.time()
 		print("----------------------------------------------")
+		print("SR1VSS' running time is: %d s" % (SR1_end_time - SR1_start_time))
 		print("U:\n",U)
 		print("V:\n",V)
 		new = np.dot(U.T, V)
@@ -220,7 +224,7 @@ class SR1:
 
 if __name__ == '__main__':
 	filePath = './pets/ratings.txt'
-	k = 300
+	k = 100
 	sr1 = SR1(filePath, k)
 	# newX = [[sr1.new[i][j] + sr1.r for j in range(len(sr1.new[i]))] for i in range(len(sr1.new))]  # 每个元素累加r
 	newX = sr1.new
