@@ -366,90 +366,122 @@ import numpy as np
 import numpy as np
 import copy
 from math import log
-
-# input data
-ideal = np.array([5,5,4,4,3,3,2,2,1,1])
-relevant_score_list = np.array([5.0,5.0,4.0,4.0,3.0,3.0,2.0,2.0,1.0,1.0])
-recall_list = np.array([8,11,2,12,3,1,5,4,13,7])
-
-def dcg(rscore, m):
-    return (2.0 ** rscore - 1.0) / np.log2(2.0 + m)
-
-def dcg_k(rslist,rlist,k):
-    # 计算第k个dcg值
-    dcgscore_list = [0.0 for i in range(11)]##计算1,2,...,k的dcg值
-    for i in range(k):
-        relevant_score = 0
-        if rlist[i] < len(rslist):
-            relevant_score = rslist[rlist[i]-1]
-        dcgscore_list[i+1] = dcgscore_list[i] + dcg(relevant_score, i)
-    return dcgscore_list;
-
-def idcg_k(ideal,k):
-    # idcg是一个系统最理想情况下的返回结果排序，也就是一个案例中所给的最佳排序
-    idcgscore_list = [0.0 for i in range(11)] #计算1,2,...,k的idcg值
-    for i in range(k):
-        idcgscore_list[i+1] = idcgscore_list[i] + dcg(ideal[i], i)
-    return idcgscore_list;
-
-# def ndcg(rslist,rlist,k):
-#     dcgscore_list = dcg_k(rslist,rlist,k)
-#     # 计算归一化因子z, 最完美情况应该是recall结果按照相关性分数降序排列
-#     idcgscore_list = idcg_k(ideal,k)
 #
-#     ndcg_list = [0.0 for i in range(k)]
+# # input data
+# ideal = np.array([5,5,4,4,3,3,2,2,1,1])
+# relevant_score_list = np.array([5.0,5.0,4.0,4.0,3.0,3.0,2.0,2.0,1.0,1.0])
+# recall_list = np.array([8,11,2,12,3,1,5,4,13,7])
+#
+# def dcg(rscore, m):
+#     return (2.0 ** rscore - 1.0) / np.log2(2.0 + m)
+#
+# def dcg_k(rslist,rlist,k):
+#     # 计算第k个dcg值
+#     dcgscore_list = [0.0 for i in range(11)]##计算1,2,...,k的dcg值
 #     for i in range(k):
-#         ndcg_list[i] = round(dcgscore_list[i+1] / idcgscore_list[i+1], 3)
-#     print(ndcg_list)
+#         relevant_score = 0
+#         if rlist[i] < len(rslist):
+#             relevant_score = rslist[rlist[i]-1]
+#         dcgscore_list[i+1] = dcgscore_list[i] + dcg(relevant_score, i)
+#     return dcgscore_list;
+#
+# def idcg_k(ideal,k):
+#     # idcg是一个系统最理想情况下的返回结果排序，也就是一个案例中所给的最佳排序
+#     idcgscore_list = [0.0 for i in range(11)] #计算1,2,...,k的idcg值
+#     for i in range(k):
+#         idcgscore_list[i+1] = idcgscore_list[i] + dcg(ideal[i], i)
+#     return idcgscore_list;
+#
+# # def ndcg(rslist,rlist,k):
+# #     dcgscore_list = dcg_k(rslist,rlist,k)
+# #     # 计算归一化因子z, 最完美情况应该是recall结果按照相关性分数降序排列
+# #     idcgscore_list = idcg_k(ideal,k)
+# #
+# #     ndcg_list = [0.0 for i in range(k)]
+# #     for i in range(k):
+# #         ndcg_list[i] = round(dcgscore_list[i+1] / idcgscore_list[i+1], 3)
+# #     print(ndcg_list)
+#
+#
+# def ndcg(ideal, rlist, k):
+#     recall = [0.0 for i in range(k)]
+#     for i in range(k):
+#         if rlist[i] <= len(ideal):
+#             recall[i] = ideal[rlist[i]-1]
+#
+#     dcg, dcg_max, ndcg = 0.0, 0.0, 0.0
+#     for i, (true, predict) in enumerate(zip(ideal, recall)):
+#         dcg += (2 ** predict - 1) / log(2 + i)
+#         dcg_max += (2 ** true -1) / log(2 + i)
+#         ndcg = dcg / dcg_max
+#     return ndcg
+#
+# print(ndcg(relevant_score_list,recall_list,10))
+# # ndcg(relevant_score_list,recall_list,10)
+# print(ndcg(ideal, recall_list, 10))
+#
+#
+# # =========================================
+# # # another version about NDCG
+# # import numpy as np
+# # def DCG(label_list):
+# #     dcgsum = 0
+# #     for i in range(len(label_list)):
+# #         dcg = (2**label_list[i] - 1)/np.log2(i+2)
+# #         dcgsum += dcg
+# #     return dcgsum
+# #
+# #
+# # #ndcg 计算
+# # def NDCG(label_list,top_n):
+# #     #没有设定topn
+# #     if top_n==None:
+# #         dcg = DCG(label_list)
+# #         ideal_list = sorted(label_list, reverse=True)
+# #         ideal_dcg = DCG(ideal_list)
+# #         if ideal_dcg == 0:
+# #             return 0
+# #         return dcg/ideal_dcg
+# #     #设定top n
+# #     else:
+# #         dcg = DCG(label_list[0:top_n])
+# #         ideal_list = sorted(label_list, reverse=True)
+# #         ideal_dcg = DCG(ideal_list[0:top_n])
+# #         if ideal_dcg == 0:
+# #             return 0
+# #         return dcg/ideal_dcg
+# # print(NDCG([3,2,0,1,1,3,0,0], 5))
+# # =========================================
 
 
-def ndcg(ideal, rlist, k):
-    recall = [0.0 for i in range(k)]
-    for i in range(k):
-        if rlist[i] <= len(ideal):
-            recall[i] = ideal[rlist[i]-1]
 
-    dcg, dcg_max, ndcg = 0.0, 0.0, 0.0
-    for i, (true, predict) in enumerate(zip(ideal, recall)):
-        dcg += (2 ** predict - 1) / log(2 + i)
-        dcg_max += (2 ** true -1) / log(2 + i)
-        ndcg = dcg / dcg_max
+import numpy as np
+
+
+def getDCG(scores):
+    return np.sum(
+        np.divide(np.power(2, scores) - 1, np.log2(np.arange(scores.shape[0], dtype=np.float32) + 2)), dtype=np.float32)
+
+
+def getNDCG(rank_list, pos_items):
+    relevance = np.ones_like(pos_items)
+    it2rel = {it: r for it, r in zip(pos_items, relevance)}
+    print("it2rel:", it2rel)
+    rank_scores = np.asarray([it2rel.get(it, 0.0) for it in rank_list], dtype=np.float32)
+    print("rank scores:", rank_scores)
+
+    idcg = getDCG(relevance)
+
+    dcg = getDCG(rank_scores)
+
+    if dcg == 0.0:
+        return 0.0
+
+    ndcg = dcg / idcg
     return ndcg
 
-print(ndcg(relevant_score_list,recall_list,10))
-# ndcg(relevant_score_list,recall_list,10)
-print(ndcg(ideal, recall_list, 10))
-
-
-# =========================================
-# # another version about NDCG
-# import numpy as np
-# def DCG(label_list):
-#     dcgsum = 0
-#     for i in range(len(label_list)):
-#         dcg = (2**label_list[i] - 1)/np.log2(i+2)
-#         dcgsum += dcg
-#     return dcgsum
-#
-#
-# #ndcg 计算
-# def NDCG(label_list,top_n):
-#     #没有设定topn
-#     if top_n==None:
-#         dcg = DCG(label_list)
-#         ideal_list = sorted(label_list, reverse=True)
-#         ideal_dcg = DCG(ideal_list)
-#         if ideal_dcg == 0:
-#             return 0
-#         return dcg/ideal_dcg
-#     #设定top n
-#     else:
-#         dcg = DCG(label_list[0:top_n])
-#         ideal_list = sorted(label_list, reverse=True)
-#         ideal_dcg = DCG(ideal_list[0:top_n])
-#         if ideal_dcg == 0:
-#             return 0
-#         return dcg/ideal_dcg
-# print(NDCG([3,2,0,1,1,3,0,0], 5))
-# =========================================
+l1 = [1, 4, 5]
+l2 = [1, 2, 3]
+a = getNDCG(l1, l2)
+print(a)
 
