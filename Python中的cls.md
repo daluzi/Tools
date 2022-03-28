@@ -4,7 +4,7 @@
 
 关于cls以及调用方法的理解。
 
-python的classmethod叫做python的累方法，是只需要在普通方法上加上@classmethod这样一个装饰器就可以。
+python的classmethod叫做python的类方法，是只需要在普通方法上加上@classmethod这样一个装饰器就可以。
 
 普通方法
 
@@ -25,7 +25,7 @@ def hello(cls):
 
 除了多了一个classmethod装饰器，其实还有括号里面的参数形式发生类变化，由self变成了cls，虽然我们之前说过（）里面的参数随便叫什么都可以，self只不过是我们约定俗成的一种写法，但是在这里，从self变成了cls并不是形式上的变化，而是根本上的变化。
 
-什么这么说呢？
+为什么这么说呢？
 
 self所代表的其实是对象的指针，它可以指向任意一个对象。在实例化对象的时候self就会变成对象实例。
 
@@ -139,6 +139,63 @@ hi.h2()
 # 类直接调用
 Hello.h2()
 ```
+
+
+
+----------------------
+
+来看一个究极例子：
+
+```python
+class Hello():
+    a = 1
+    def h1(self):
+        print ('hello 1111')
+        print(self.a)
+
+    @classmethod
+    def h2(cls):
+        print ('hello 22222')
+        print(cls().a)
+        cls().h1()
+
+hello = Hello()
+print(Hello.a)
+print(Hello().a)
+Hello().h1()
+Hello.h2()
+Hello().h2()
+hello.h2()
+hello.h1()
+```
+
+结果：
+
+```python
+C:\Users\dell\Anaconda3\python.exe F:/TodoPaper/DSSM/test.py
+1
+1
+hello 1111
+1
+hello 22222
+1
+hello 1111
+1
+hello 22222
+1
+hello 1111
+1
+hello 22222
+1
+hello 1111
+1
+hello 1111
+1
+```
+
+
+
+
 
 
 
